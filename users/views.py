@@ -1,6 +1,10 @@
 # from django.shortcuts import render
 from .models import User
-from .serializers import UserSerializer, UserCreateSerializer
+from .serializers import (
+    UserSerializer,
+    UserCreateSerializer,
+    UserUpdateSerializer,
+)
 from .schemas import UserSchema
 from rest_framework import status
 from rest_framework.viewsets import generics
@@ -55,6 +59,9 @@ class UserView(generics.GenericAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+# Manejo de usuarios por ID
+
+
 class UserGetByIdView(generics.GenericAPIView):
     serializer_class = UserSerializer
     http_method_names = ["get", "patch", "delete"]
@@ -64,8 +71,72 @@ class UserGetByIdView(generics.GenericAPIView):
         operation_description="En este servicio encontramos a un usuario y vemos sus datos",
     )
     def get(self, _, id):
-        record = get_object_or_404(
-            User, pk=id, is_active=True, is_staff=False, status=True
-        )
+        record = get_object_or_404(User, pk=id, is_active=True, is_staff=False)
         serializer = self.serializer_class(record)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        operation_summary="Endpoitn para actualizar los datos de un usuario",
+        operation_description="En este servicio encontramos a un usuario y vemos sus datos",
+        request_body=UserUpdateSerializer,
+    )
+    def patch(self, request, id):
+        record = get_object_or_404(User, pk=id, is_active=True, is_staff=False)
+        serializer = UserUpdateSerializer(record, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        operation_summary="Endpoint para inhabilitar un usuario por el ID",
+        operation_description="En este servicio podemos inactivar o inhabilitar un usuario por el ID",
+    )
+    def delete(self, _, id):
+        record = get_object_or_404(User, pk=id, is_active=True, is_staff=False)
+        record.is_active = False
+        record.save()
+        return Response(
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+
+# Reactivar el usuario en caso sea necesario
+
+
+class UserReactivateView(generics.GenericAPIView):
+    http_method_names = ["patch"]
+
+    @swagger_auto_schema(
+        operation_summary="Endpoint para reactivar un usuario",
+        operation_description="En este servicio reactivamos un usuario por su id",
+    )
+    def patch(self, _, id):
+        record = get_object_or_404(User, pk=id, is_active=False, is_staff=False)
+        record.is_active = True
+        record.save()
+        return Response(
+            {"message": f"Usuario {record.username} deshabilitado"},
+            status=status.HTTP_200_OK,
+        )
+
+
+# Eliminar por completo un usuario
+
+
+class UserDeleteView(generics.GenericAPIView):
+    serializer_class = UserSerializer
+    http_method_names = ["delete"]
+
+    @swagger_auto_schema(
+        operation_summary="Endpoint para eliminar completamente un usuario de la base de datos",
+        operation_description="Eliminar definitavemente un usuaio de la base de datos, solo si ya esta inactivo",
+    )
+    def delete(self, _, id):
+        record = get_object_or_404(User, pk=id, is_active=False, is_staff=False)
+        record.delete()
+        return Response(
+            {
+                "message": f"Usuario {record.username} eliminado completamente de la base de datos"
+            },
+            status=status.HTTP_204_NO_CONTENT,
+        )

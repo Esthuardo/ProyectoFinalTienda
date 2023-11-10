@@ -10,13 +10,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 def validate_unique_email(attrs, instance=None):
     email = attrs.get("email")
-    if (
-        User.objects.filter(email=email)
-        .exclude(pk=instance.pk if instance else None)
-        .exists()
-    ):
-        # Este if es más que nada al momento de actualizar que permita dejar el mismo correo
-        raise serializers.ValidationError("El correo que quiere utilizar ya existe")
+    if email:
+        user = User.objects.filter(email=email)
+        if instance != None:
+            user = user.exclude(pk=instance.pk)
+        if user.exists():
+            raise serializers.ValidationError("El correo que quiere utilizar ya existe")
     return attrs
 
 
@@ -38,12 +37,13 @@ class UserCreateSerializer(serializers.Serializer):
 class UserUpdateSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=50)
     last_name = serializers.CharField(max_length=50)
-    email = serializers.EmailField()
+    username = serializers.CharField(max_length=50, required=False, write_only=True)
+    email = serializers.EmailField(required=False, write_only=True)
 
     message = serializers.ReadOnlyField()
 
     def validate(self, attrs):
-        validate_unique_email(attrs)
+        validate_unique_email(attrs, self.instance)
         return attrs
 
     def update(self, instance, validated_data):
