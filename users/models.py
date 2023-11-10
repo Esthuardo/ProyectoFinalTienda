@@ -3,14 +3,14 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    name = models.CharField(max_length=50)
-    surname = models.CharField(max_length=50)
-    email = models.EmailField(unique=True, blank=False)
-    phone_number = models.CharField(max_length=18)
-    status = models.BooleanField(default=True)
+    email = models.EmailField(unique=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = "users"
+
+    REQUIRED_FIELDS = ["email", "password"]
 
     def create_user(self, **kwargs):
         record = self.model(**kwargs)
