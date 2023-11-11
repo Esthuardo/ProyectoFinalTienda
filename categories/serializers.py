@@ -21,6 +21,7 @@ def validate_unique_categorie(attrs, instance=None):
 
 class CategorieCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=25)
+    status = serializers.BooleanField(read_only=True)
 
     def validate(self, attrs):
         validate_unique_categorie(attrs)
@@ -32,10 +33,18 @@ class CategorieCreateSerializer(serializers.Serializer):
 
 class CategorieUpdateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=25)
+    status = serializers.BooleanField(read_only=True)
 
     def validate(self, attrs):
         validate_unique_categorie(attrs, self.instance)
         return attrs
 
-    def create(self, validated_data):
-        return Category.objects.create(**validated_data)
+    def update(self, instance, validated_data):
+        instance.__dict__.update(**validated_data)
+        instance.save()
+        validated_data["message"] = f"Categoria {instance.name} actualizada !"
+        return validated_data
+
+
+class CategoryReactivateSerializer(serializers.Serializer):
+    message = serializers.ReadOnlyField()

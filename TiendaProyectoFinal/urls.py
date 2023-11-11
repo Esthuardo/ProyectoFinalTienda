@@ -21,4 +21,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("TiendaProyectoFinal.openapi")),
     path("users/", include("users.urls")),
+    path("categories/", include("categories.urls")),
 ]

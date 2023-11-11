@@ -90,7 +90,7 @@ class UserGetByIdView(generics.GenericAPIView):
 
     @swagger_auto_schema(
         operation_summary="Endpoint para inhabilitar un usuario por el ID",
-        operation_description="En este servicio podemos inactivar o inhabilitar un usuario por el ID",
+        operation_description="En este servicio podemos inhabilitar un usuario por el ID",
     )
     def delete(self, _, id):
         record = get_object_or_404(User, pk=id, is_active=True, is_staff=False)
@@ -117,7 +117,7 @@ class UserReactivateView(generics.GenericAPIView):
         record.is_active = True
         record.save()
         return Response(
-            {"message": f"Usuario {record.username} deshabilitado"},
+            {"message": f"Usuario {record.username} habilitado"},
             status=status.HTTP_200_OK,
         )
 
