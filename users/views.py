@@ -28,8 +28,8 @@ class UserView(generics.GenericAPIView):
         manual_parameters=schema.all(),
     )
     def get(self, request):
-        page = request.query_params.get("page")
-        per_page = request.query_params.get("per_page")
+        page = request.query_params.get("page", 1)
+        per_page = request.query_params.get("per_page", 8)
         record = User.objects.all().order_by("id")
 
         pagination = Paginator(record, per_page=per_page)
