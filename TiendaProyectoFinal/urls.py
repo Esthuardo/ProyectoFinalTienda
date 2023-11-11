@@ -22,4 +22,5 @@ urlpatterns = [
     path("", include("TiendaProyectoFinal.openapi")),
     path("users/", include("users.urls")),
     path("categories/", include("categories.urls")),
+    path("products/", include("products.urls")),
 ]

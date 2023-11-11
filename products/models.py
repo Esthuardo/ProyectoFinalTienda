@@ -17,3 +17,6 @@ class Product(models.Model):
 
     class Meta:
         db_table = "productos"
+
+    def __str__(self):
+        return self.name
