@@ -4,6 +4,7 @@ from .serializers import (
     UserSerializer,
     UserCreateSerializer,
     UserUpdateSerializer,
+    UserReactivateSerializer,
 )
 from .schemas import UserSchema
 from rest_framework import status
@@ -104,6 +105,7 @@ class UserGetByIdView(generics.GenericAPIView):
 
 
 class UserReactivateView(generics.GenericAPIView):
+    serializer_class = UserReactivateSerializer
     http_method_names = ["patch"]
 
     @swagger_auto_schema(

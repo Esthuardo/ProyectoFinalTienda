@@ -51,3 +51,7 @@ class UserUpdateSerializer(serializers.Serializer):
         instance.save()
         validated_data["message"] = f"Usuario {instance.first_name} actualizado !"
         return validated_data
+
+
+class UserReactivateSerializer(serializers.Serializer):
+    message = serializers.ReadOnlyField()
