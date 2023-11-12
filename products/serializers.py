@@ -7,6 +7,7 @@ class ProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
+            "id",
             "name",
             "category",
             "barcode",
@@ -39,7 +40,7 @@ def validate_unique_barcode_customsCode(attrs, instance=None):
     return attrs
 
 
-class ProductCreateSerializer(serializers.Serializer):
+class ProductsCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=50)
     category = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.filter(status=True)
@@ -76,5 +77,19 @@ class ProductsUpdateSerializer(serializers.Serializer):
     status = serializers.BooleanField(read_only=True)
 
     def validate(self, attrs):
-        validate_unique_barcode_customsCode(attrs)
+        validate_unique_barcode_customsCode(attrs, self.instance)
         return attrs
+
+    def update(self, instance, validated_data):
+        instance.__dict__.update(**validated_data)
+        instance.save()
+        validated_data["message"] = f"Producto {instance.name} actualizado !"
+        return validated_data
+
+
+class ProductsReactivateSerializer(serializers.Serializer):
+    pass
+
+
+class ProductsSearchByNameSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=50)

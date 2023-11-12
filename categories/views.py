@@ -111,6 +111,6 @@ class CategoryReactivateView(generics.GenericAPIView):
         record.status = True
         record.save()
         return Response(
-            {"message": f"Usuario {record.name} habilitado"},
+            {"message": f"Categoria {record.name} habilitado"},
             status=status.HTTP_200_OK,
         )
