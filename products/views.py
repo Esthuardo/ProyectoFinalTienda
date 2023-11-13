@@ -10,12 +10,19 @@ from .schemas import ProductsSchema
 from rest_framework import status
 from rest_framework.viewsets import generics
 from rest_framework.response import Response
-from django.core.paginator import Paginator
+from rest_framework.exceptions import NotFound
+
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 
+from services.paginateTables import PaginateTable
+from services.enableTables import Element
 
 schema = ProductsSchema()
+paginate = PaginateTable()
+element = Element()
+
+# Obtener los productosy agregar nuevos
 
 
 class ProductView(generics.GenericAPIView):
@@ -28,29 +35,9 @@ class ProductView(generics.GenericAPIView):
         manual_parameters=schema.all,
     )
     def get(self, request):
-        page = request.query_params.get("page")
-        per_page = request.query_params.get("per_page")
         record = Product.objects.all().exclude(status=False).order_by("name")
-
-        pagination = Paginator(record, per_page=per_page)
-        nro_page = pagination.get_page(page)
-        serializer = self.serializer_class(nro_page.object_list, many=True)
-
-        return Response(
-            {
-                "results": serializer.data,
-                "pagination": {
-                    "totalRecords": pagination.count,
-                    "totalPages": pagination.num_pages,
-                    "perPage": pagination.per_page,
-                    "currentPage": nro_page.number,
-                },
-            },
-            status=status.HTTP_200_OK,
-        )
-
-    def get_queryset(self):
-        return Product.objects.all().exclude(status=False).order_by("name")
+        data = paginate.pagination(request, record, self.serializer_class)
+        return Response(data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         operation_summary="Endpoint para crear un producto",
@@ -62,6 +49,9 @@ class ProductView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+# Operaciones con los productos usando su ID
 
 
 class ProductByIdView(generics.GenericAPIView):
@@ -93,12 +83,13 @@ class ProductByIdView(generics.GenericAPIView):
         operation_description="En este servicio podemos inhabilitar un producto por el ID",
     )
     def delete(self, _, id):
-        record = get_object_or_404(Product, pk=id, status=True)
-        record.status = False
-        record.save()
+        element.disableElement(Product, id)
         return Response(
             status=status.HTTP_204_NO_CONTENT,
         )
+
+
+# Reactivar un producto
 
 
 class ProductReactivateView(generics.GenericAPIView):
@@ -110,13 +101,11 @@ class ProductReactivateView(generics.GenericAPIView):
         operation_description=" En este servicios habilitamos un producto por su id",
     )
     def patch(self, _, id):
-        record = get_object_or_404(Product, pk=id, status=False)
-        record.status = True
-        record.save()
-        return Response(
-            {"message": f"Producto {record.name} habilitado"},
-            status=status.HTTP_200_OK,
-        )
+        message = element.enableElement("Producto", Product, id)
+        return Response(message, status=status.HTTP_200_OK)
+
+
+# Buscar un producto por su nombre
 
 
 class ProductSearchByNameView(generics.GenericAPIView):
@@ -129,16 +118,15 @@ class ProductSearchByNameView(generics.GenericAPIView):
         manual_parameters=schema.all,
     )
     def get(self, request, name):
-        page = request.query_params.get("page")
-        per_page = request.query_params.get("per_page")
         record = Product.objects.filter(name__icontains=name, status=True)
-
-        pagination = Paginator(record, per_page=per_page)
-        nro_page = pagination.get_page(page)
-        serializer = self.serializer_class(nro_page.object_list, many=True)
+        if not record.exists():
+            raise NotFound(
+                "No se encontró ningún producto con el nombre proporcionado."
+            )
+        data = paginate.pagination(request, record, self.serializer_class)
         return Response(
             {
-                "results": serializer.data,
+                "results": data["results"],
             },
             status=status.HTTP_200_OK,
         )

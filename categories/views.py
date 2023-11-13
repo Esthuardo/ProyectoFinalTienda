@@ -9,11 +9,16 @@ from .schemas import CategorySchema
 from rest_framework import status
 from rest_framework.viewsets import generics
 from rest_framework.response import Response
-from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
+from services.paginateTables import PaginateTable
+from services.enableTables import Element
 
 schema = CategorySchema()
+paginate = PaginateTable()
+element = Element()
+
+# Operaciones para ver y crear categorias
 
 
 class CategoryView(generics.GenericAPIView):
@@ -23,27 +28,13 @@ class CategoryView(generics.GenericAPIView):
     @swagger_auto_schema(
         operation_summary="Endpoint para listar todas las categorias activas",
         operation_description="Retoma una lista de categorias de los productos",
-        manual_parameters=schema.all(),
+        manual_parameters=schema.all,
     )
     def get(self, request):
-        page = request.query_params.get("page", 1)
-        per_page = request.query_params.get("per_page", 10)
         record = Category.objects.all().exclude(status=False).order_by("name")
-
-        pagination = Paginator(record, per_page=per_page)
-        nro_page = pagination.get_page(page)
-        serializer = self.serializer_class(nro_page.object_list, many=True)
-
+        data = paginate(request, record, self.serializer_class)
         return Response(
-            {
-                "results": serializer.data,
-                "pagination": {
-                    "totalRecords": pagination.count,
-                    "totalPages": pagination.num_pages,
-                    "perPage": pagination.per_page,
-                    "currentPage": nro_page.number,
-                },
-            },
+            data,
             status=status.HTTP_200_OK,
         )
 
@@ -56,6 +47,9 @@ class CategoryView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+# Operaciones con la categoria con su ID
 
 
 class CategoryByIdView(generics.GenericAPIView):
@@ -87,15 +81,13 @@ class CategoryByIdView(generics.GenericAPIView):
         operation_description="En este servicio podemos inhabilitar una categoria por el ID",
     )
     def delete(self, _, id):
-        record = get_object_or_404(Category, pk=id, status=True)
-        record.status = False
-        record.save()
+        element.disableElement(Category, id)
         return Response(
             status=status.HTTP_204_NO_CONTENT,
         )
 
 
-# Reactivar el usuario en caso sea necesario
+# Reactivar la categoria en caso sea necesario
 
 
 class CategoryReactivateView(generics.GenericAPIView):
@@ -107,10 +99,8 @@ class CategoryReactivateView(generics.GenericAPIView):
         operation_description="En este servicio reactivamos un usuario por su id",
     )
     def patch(self, _, id):
-        record = get_object_or_404(Category, pk=id, status=False)
-        record.status = True
-        record.save()
+        message = element.enableElement("Categoria", Category, id)
         return Response(
-            {"message": f"Categoria {record.name} habilitado"},
+            message,
             status=status.HTTP_200_OK,
         )

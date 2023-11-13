@@ -11,11 +11,12 @@ from rest_framework import status
 from rest_framework.viewsets import generics
 from drf_yasg.utils import swagger_auto_schema
 from django.shortcuts import get_object_or_404
-from django.core.paginator import Paginator
 from rest_framework.response import Response
+from services.paginateTables import PaginateTable
 
 # Create your views here.
 schema = UserSchema()
+paginate = PaginateTable()
 
 
 class UserView(generics.GenericAPIView):
@@ -25,26 +26,13 @@ class UserView(generics.GenericAPIView):
     @swagger_auto_schema(
         operation_summary="Endpoint para listar a los Usuarios trabajadores",
         operation_description="Retorna la lista de trabajadores",
-        manual_parameters=schema.all(),
+        manual_parameters=schema.all,
     )
     def get(self, request):
-        page = request.query_params.get("page", 1)
-        per_page = request.query_params.get("per_page", 8)
         record = User.objects.all().order_by("id")
-
-        pagination = Paginator(record, per_page=per_page)
-        nro_page = pagination.get_page(page)
-        serializer = self.serializer_class(nro_page.object_list, many=True)
+        data = paginate.pagination(request, record, self.serializer_class)
         return Response(
-            {
-                "results": serializer.data,
-                "pagination": {
-                    "totalRecords": pagination.count,
-                    "totalPages": pagination.num_pages,
-                    "perPage": pagination.per_page,
-                    "currentPage": nro_page.number,
-                },
-            },
+            data,
             status=status.HTTP_200_OK,
         )
 
