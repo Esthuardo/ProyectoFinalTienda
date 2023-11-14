@@ -3,7 +3,6 @@ from .serializers import (
     CategorieSerializer,
     CategorieCreateSerializer,
     CategorieUpdateSerializer,
-    CategoryReactivateSerializer,
 )
 from .schemas import CategorySchema
 from rest_framework import status
@@ -13,6 +12,7 @@ from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from services.paginateTables import PaginateTable
 from services.enableTables import Element
+from services.validateUnique import ReactivateSerializer
 
 schema = CategorySchema()
 paginate = PaginateTable()
@@ -91,7 +91,7 @@ class CategoryByIdView(generics.GenericAPIView):
 
 
 class CategoryReactivateView(generics.GenericAPIView):
-    serializer_class = CategoryReactivateSerializer
+    serializer_class = ReactivateSerializer
     http_method_names = ["patch"]
 
     @swagger_auto_schema(

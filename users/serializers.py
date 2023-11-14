@@ -1,22 +1,12 @@
 from rest_framework import serializers
 from .models import User
+from services.validateUnique import validate_unique
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "first_name", "last_name", "email", "password", "username"]
-
-
-def validate_unique_email(attrs, instance=None):
-    email = attrs.get("email")
-    if email:
-        user = User.objects.filter(email=email)
-        if instance != None:
-            user = user.exclude(pk=instance.pk)
-        if user.exists():
-            raise serializers.ValidationError("El correo que quiere utilizar ya existe")
-    return attrs
 
 
 class UserCreateSerializer(serializers.Serializer):
@@ -30,7 +20,7 @@ class UserCreateSerializer(serializers.Serializer):
         return User.objects.create_user(**validated_data)
 
     def validate(self, attrs):
-        validate_unique_email(attrs)
+        validate_unique.email(User, attrs)
         return attrs
 
 
@@ -43,7 +33,7 @@ class UserUpdateSerializer(serializers.Serializer):
     message = serializers.ReadOnlyField()
 
     def validate(self, attrs):
-        validate_unique_email(attrs, self.instance)
+        validate_unique.email(User, attrs, self.instance)
         return attrs
 
     def update(self, instance, validated_data):
@@ -51,7 +41,3 @@ class UserUpdateSerializer(serializers.Serializer):
         instance.save()
         validated_data["message"] = f"Usuario {instance.first_name} actualizado !"
         return validated_data
-
-
-class UserReactivateSerializer(serializers.Serializer):
-    message = serializers.ReadOnlyField()

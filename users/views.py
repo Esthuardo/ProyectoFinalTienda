@@ -4,7 +4,6 @@ from .serializers import (
     UserSerializer,
     UserCreateSerializer,
     UserUpdateSerializer,
-    UserReactivateSerializer,
 )
 from .schemas import UserSchema
 from rest_framework import status
@@ -13,6 +12,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from services.paginateTables import PaginateTable
+from services.validateUnique import ReactivateSerializer
 
 # Create your views here.
 schema = UserSchema()
@@ -37,8 +37,8 @@ class UserView(generics.GenericAPIView):
         )
 
     @swagger_auto_schema(
-        operation_summary="Endpoint para listar a los Usuarios trabajadores",
-        operation_description="Retorna la lista de trabajadores",
+        operation_summary="Endpoint para crear un usuario trabajador",
+        operation_description="Crea un trabajador",
         request_body=UserCreateSerializer,
     )
     def post(self, request):
@@ -93,7 +93,7 @@ class UserGetByIdView(generics.GenericAPIView):
 
 
 class UserReactivateView(generics.GenericAPIView):
-    serializer_class = UserReactivateSerializer
+    serializer_class = ReactivateSerializer
     http_method_names = ["patch"]
 
     @swagger_auto_schema(

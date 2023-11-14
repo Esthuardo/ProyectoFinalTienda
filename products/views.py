@@ -3,7 +3,6 @@ from .serializers import (
     ProductsSerializer,
     ProductsCreateSerializer,
     ProductsUpdateSerializer,
-    ProductsReactivateSerializer,
     ProductsSearchByNameSerializer,
 )
 from .schemas import ProductsSchema
@@ -17,6 +16,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from services.paginateTables import PaginateTable
 from services.enableTables import Element
+from services.validateUnique import ReactivateSerializer
 
 schema = ProductsSchema()
 paginate = PaginateTable()
@@ -28,6 +28,9 @@ element = Element()
 class ProductView(generics.GenericAPIView):
     serializer_class = ProductsSerializer
     http_method_names = ["get", "post"]
+
+    def get_queryset(self):
+        return Product.objects.filter(status=True).all()
 
     @swagger_auto_schema(
         operation_summary="Endpoint para listar todos los productos activos",
@@ -93,7 +96,7 @@ class ProductByIdView(generics.GenericAPIView):
 
 
 class ProductReactivateView(generics.GenericAPIView):
-    serializer_class = ProductsReactivateSerializer
+    serializer_class = ReactivateSerializer
     http_method_names = ["patch"]
 
     @swagger_auto_schema(

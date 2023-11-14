@@ -44,7 +44,3 @@ class CategorieUpdateSerializer(serializers.Serializer):
         instance.save()
         validated_data["message"] = f"Categoria {instance.name} actualizada !"
         return validated_data
-
-
-class CategoryReactivateSerializer(serializers.Serializer):
-    message = serializers.ReadOnlyField()

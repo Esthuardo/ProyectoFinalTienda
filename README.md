@@ -38,15 +38,13 @@
 | number_of_order | int       | not null               |
 | status          | boolean   | not null               |
 
-## Tabla - Lista_productos_a_comprar
+## Tabla - Item_Carrito
 
-| variable          | Type  | key                    |
-| ----------------- | ----- | ---------------------- |
-| id                | int   | primary key - not null |
-| id_producto       | int   | foreign key            |
-| cantidad_producto | int   |                        |
-| total             | float |                        |
-| datetime          | time  |                        |
+| variable          | Type | key                    |
+| ----------------- | ---- | ---------------------- |
+| id                | int  | primary key - not null |
+| id_producto       | int  | foreign key            |
+| cantidad_producto | int  |                        |
 
 ## Tabla - Carrito_compra
 
@@ -68,16 +66,3 @@
 | email        | email     | not null               |
 | password     | char (12) | not null               |
 | status       | boolean   | not null               |
-
-5º Crear las migraciones
-
-```sh
-python manage.py makemigrations
-python manage.py makemigrations <nombre_app>
-```
-
-6º Sincronizar migraciones
-
-```sh
-python manage.py migrate
-```
