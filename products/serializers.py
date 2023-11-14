@@ -25,7 +25,7 @@ class ProductsSerializer(serializers.ModelSerializer):
 class ProductsCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=50)
     category = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.filter(status=True).all()
+        queryset=Category.objects.filter(status=True).order_by("name"),
     )
     barcode = serializers.CharField(max_length=20)
     customs_code = serializers.CharField(max_length=30)

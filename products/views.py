@@ -29,16 +29,13 @@ class ProductView(generics.GenericAPIView):
     serializer_class = ProductsSerializer
     http_method_names = ["get", "post"]
 
-    def get_queryset(self):
-        return Product.objects.filter(status=True).all()
-
     @swagger_auto_schema(
         operation_summary="Endpoint para listar todos los productos activos",
         operation_description="Retoma una lista de productos",
         manual_parameters=schema.all,
     )
     def get(self, request):
-        record = Product.objects.all().exclude(status=False).order_by("name")
+        record = Product.objects.filter(status=True).order_by("name")
         data = paginate.pagination(request, record, self.serializer_class)
         return Response(data, status=status.HTTP_200_OK)
 

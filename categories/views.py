@@ -32,7 +32,7 @@ class CategoryView(generics.GenericAPIView):
     )
     def get(self, request):
         record = Category.objects.all().exclude(status=False).order_by("name")
-        data = paginate(request, record, self.serializer_class)
+        data = paginate.pagination(request, record, self.serializer_class)
         return Response(
             data,
             status=status.HTTP_200_OK,
