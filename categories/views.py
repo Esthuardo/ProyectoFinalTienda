@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from services.paginateTables import PaginateTable
 from services.enableTables import Element
-from services.validateUnique import ReactivateSerializer
+from services.validations import ReactivateSerializer
 
 schema = CategorySchema()
 paginate = PaginateTable()

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Product
 from categories.models import Category
-from services.validateUnique import validate_unique
+from services.validations import validate_unique
 
 
 class ProductsSerializer(serializers.ModelSerializer):

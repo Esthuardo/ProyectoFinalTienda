@@ -34,6 +34,29 @@ class validate_unique:
 
         return attrs
 
+    # Validar que sea un nombre único
+    def name(table, attrs, instance=None):
+        name = attrs.get("name")
+        if name:
+            categorie = table.objects.filter(name=name)
+            if instance != None:
+                categorie = categorie.exclude(pk=instance.pk)
+            if categorie.exists():
+                raise serializers.ValidationError(f"La categoria {name} ya existe")
+        return attrs
+
+
+class validate_stock:
+    def quantity(attrs):
+        product = attrs.get("product")
+        stock = product.stock
+        quantity = attrs.get("quantity")
+        if quantity > stock:
+            raise serializers.ValidationError(
+                "La cantidad que intenta agregar es mayor al stock"
+            )
+        return attrs
+
 
 class ReactivateSerializer(serializers.Serializer):
     message = message = serializers.ReadOnlyField()

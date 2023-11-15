@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Client
-from services.validateUnique import validate_unique
+from services.validations import validate_unique
 
 
 class ClientSerializer(serializers.ModelSerializer):

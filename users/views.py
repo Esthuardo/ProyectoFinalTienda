@@ -12,7 +12,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from services.paginateTables import PaginateTable
-from services.validateUnique import ReactivateSerializer
+from services.validations import ReactivateSerializer
 
 # Create your views here.
 schema = UserSchema()

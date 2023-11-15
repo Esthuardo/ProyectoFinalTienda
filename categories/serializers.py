@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Category
+from services.validations import validate_unique
 
 
 class CategorieSerializer(serializers.ModelSerializer):
@@ -8,15 +9,7 @@ class CategorieSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "status"]
 
 
-def validate_unique_categorie(attrs, instance=None):
-    name = attrs.get("name")
-    if name:
-        categorie = Category.objects.filter(name=name)
-        if instance != None:
-            categorie = categorie.exclude(pk=instance.pk)
-        if categorie.exists():
-            raise serializers.ValidationError(f"La categoria {name} ya existe")
-    return attrs
+validation = validate_unique()
 
 
 class CategorieCreateSerializer(serializers.Serializer):
@@ -24,7 +17,7 @@ class CategorieCreateSerializer(serializers.Serializer):
     status = serializers.BooleanField(read_only=True)
 
     def validate(self, attrs):
-        validate_unique_categorie(attrs)
+        validate_unique.name(Category, attrs)
         return attrs
 
     def create(self, validated_data):
@@ -36,7 +29,7 @@ class CategorieUpdateSerializer(serializers.Serializer):
     status = serializers.BooleanField(read_only=True)
 
     def validate(self, attrs):
-        validate_unique_categorie(attrs, self.instance)
+        validate_unique.name(Category, attrs, self.instance)
         return attrs
 
     def update(self, instance, validated_data):
