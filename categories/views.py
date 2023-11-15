@@ -58,7 +58,7 @@ class CategoryByIdView(generics.GenericAPIView):
 
     @swagger_auto_schema(
         operation_summary="Endpoint para obtener una categoria en especifico",
-        operation_description="En este servicio encontramos una categoria por su nombre o su id",
+        operation_description="En este servicio encontramos una categoria por su id",
     )
     def get(self, _, id):
         record = get_object_or_404(Category, pk=id, status=True)
@@ -95,8 +95,8 @@ class CategoryReactivateView(generics.GenericAPIView):
     http_method_names = ["patch"]
 
     @swagger_auto_schema(
-        operation_summary="Endpoint para reactivar un usuario",
-        operation_description="En este servicio reactivamos un usuario por su id",
+        operation_summary="Endpoint para reactivar una categoria",
+        operation_description="En este servicio reactivamos una categoria por su id",
     )
     def patch(self, _, id):
         message = element.enableElement("Categoria", Category, id)

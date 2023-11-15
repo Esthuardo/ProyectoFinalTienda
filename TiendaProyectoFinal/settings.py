@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "clients",
     "categories",
     "itemsShopCart",
+    "payment_method",
 ]
 
 MIDDLEWARE = [

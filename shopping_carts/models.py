@@ -3,6 +3,7 @@ from django.db import models
 from itemsShopCart.models import ItemShopCart
 from clients.models import Client
 from datetime import datetime
+from payment_method.models import PaymentMethod
 
 # Create your models here.
 
@@ -12,7 +13,9 @@ class Shopping_cart(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True)
     items = models.ManyToManyField(ItemShopCart)
     date = models.DateTimeField(default=datetime.now)
-    payment_method = models.CharField(max_length=25, unique=True)
+    payment_method = models.ForeignKey(
+        PaymentMethod, on_delete=models.CASCADE, null=True
+    )
     direction = models.TextField(default="")
 
     class Meta:
