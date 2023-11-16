@@ -1,7 +1,7 @@
 from .models import ItemShopCart
 from rest_framework import serializers
 from products.models import Product
-from services.validations import validate_stock
+from services.validations import validate_field
 
 
 class ItemShopCartSerializer(serializers.ModelSerializer):
@@ -10,7 +10,7 @@ class ItemShopCartSerializer(serializers.ModelSerializer):
         fields = ["id", "product", "quantity"]
 
 
-validation = validate_stock()
+validation = validate_field()
 
 
 class ItemShopCartCreateSerializer(serializers.Serializer):
@@ -20,7 +20,7 @@ class ItemShopCartCreateSerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
 
     def validate(self, attrs):
-        validate_stock.quantity(attrs)
+        validate_field.quantity(attrs)
         return attrs
 
     def create(self, validated_data):
@@ -34,7 +34,7 @@ class ItemShopUpdateSerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
 
     def validate(self, attrs):
-        validate_stock.quantity(attrs)
+        validate_field.quantity(attrs)
         return attrs
 
     def update(self, instance, validated_data):

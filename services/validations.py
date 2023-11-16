@@ -46,7 +46,7 @@ class validate_unique:
         return attrs
 
 
-class validate_stock:
+class validate_field:
     def quantity(attrs):
         product = attrs.get("product")
         stock = product.stock
@@ -55,6 +55,13 @@ class validate_stock:
             raise serializers.ValidationError(
                 "La cantidad que intenta agregar es mayor al stock"
             )
+        return attrs
+
+    def status(table, field, attrs):
+        search_field = attrs.get(field)
+        filter_kwargs = {field: search_field, "status": True}
+        if not table.objects.filter(**filter_kwargs).exists():
+            raise serializers.ValidationError("Error al verificar si esta habilitado")
         return attrs
 
 

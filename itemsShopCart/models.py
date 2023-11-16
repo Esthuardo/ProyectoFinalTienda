@@ -9,3 +9,6 @@ class ItemShopCart(models.Model):
 
     class Meta:
         db_table = "ItemShopCart"
+
+    def __str__(self):
+        return f"{self.product.name} - {self.quantity} unidades"

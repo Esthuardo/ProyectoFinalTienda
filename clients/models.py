@@ -14,6 +14,9 @@ class Client(models.Model):
     class Meta:
         db_table = "clients"
 
+    def __str__(self):
+        return self.name
+
     # def create_user(self, **kwargs):
     #     record = self.model(**kwargs)
     #     record.set_password(kwargs["password"])

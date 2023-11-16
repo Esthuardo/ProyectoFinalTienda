@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Product
 from categories.models import Category
-from services.validations import validate_unique
+from services.validations import validate_unique, validate_field
 
 
 class ProductsSerializer(serializers.ModelSerializer):
@@ -38,6 +38,7 @@ class ProductsCreateSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         validate_unique.barcode_customsCode(Product, attrs)
+
         return attrs
 
     def create(self, validated_data):
@@ -60,6 +61,7 @@ class ProductsUpdateSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         validate_unique.barcode_customsCode(Product, attrs, self.instance)
+
         return attrs
 
     def update(self, instance, validated_data):
