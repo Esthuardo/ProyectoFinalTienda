@@ -42,6 +42,7 @@ class LoginClientSerializer(serializers.Serializer):
     def validate(self, attrs):
         email = attrs.get("email")
         password = attrs.get("password")
+        print(email, password)
         if not authenticate_client(email=email, password=password):
             raise AuthenticationFailed("Client not found or credentials is invalid")
         return attrs

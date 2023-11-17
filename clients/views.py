@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from services.paginateTables import PaginateTable
 from services.validations import ReactivateSerializer
 from services.enableTables import Element
-from authenticationClient.permissions import ClientIsAuthenticated
+from authenticationClient.permissions import ClientIsAuthenticated, ClientAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 schema = ClientSchema()
@@ -61,7 +61,8 @@ class ClientView(generics.GenericAPIView):
 class ClientGetByIdView(generics.GenericAPIView):
     serializer_class = ClientSerializer
     http_method_names = ["get", "patch", "delete"]
-    permission_classes = ClientIsAuthenticated
+    authentication_classes = [ClientAuthentication]
+    permission_classes = [ClientIsAuthenticated]
 
     @swagger_auto_schema(
         operation_summary="Endpoint para obtener un usuario especifico",
