@@ -6,7 +6,7 @@ from .serializers import (
     UserUpdateSerializer,
 )
 from .schemas import UserSchema
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.viewsets import generics
 from drf_yasg.utils import swagger_auto_schema
 from django.shortcuts import get_object_or_404
@@ -22,14 +22,15 @@ paginate = PaginateTable()
 class UserView(generics.GenericAPIView):
     serializer_class = UserSerializer
     http_method_names = ["get", "post"]
+    permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_summary="Endpoint para listar a los Usuarios trabajadores",
-        operation_description="Retorna la lista de trabajadores",
+        operation_summary="Endpoint para listar a los Usuarios trabajadores habilitados",
+        operation_description="Retorna la lista de trabajadores habilitados",
         manual_parameters=schema.all,
     )
     def get(self, request):
-        record = User.objects.all().order_by("id")
+        record = User.objects.filter(is_active=True).order_by("id")
         data = paginate.pagination(request, record, self.serializer_class)
         return Response(
             data,
@@ -54,6 +55,7 @@ class UserView(generics.GenericAPIView):
 class UserGetByIdView(generics.GenericAPIView):
     serializer_class = UserSerializer
     http_method_names = ["get", "patch", "delete"]
+    permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
         operation_summary="Endpoint para obtener un usuario especifico",
@@ -89,12 +91,33 @@ class UserGetByIdView(generics.GenericAPIView):
         )
 
 
+# Ver lista de usuarios deshabilitados
+class UserDisabled(generics.GenericAPIView):
+    serializer_class = UserSerializer
+    http_method_names = ["get"]
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="Endpoint para listar usuarios deshabilitados",
+        operation_description="En este servicio vemos la lista de usuarios deshabilitados",
+        manual_parameters=schema.all,
+    )
+    def get(self, request):
+        record = User.objects.filter(is_active=False).order_by("id")
+        data = paginate.pagination(request, record, self.serializer_class)
+        return Response(
+            data,
+            status=status.HTTP_200_OK,
+        )
+
+
 # Reactivar el usuario en caso sea necesario
 
 
 class UserReactivateView(generics.GenericAPIView):
     serializer_class = ReactivateSerializer
     http_method_names = ["patch"]
+    permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
         operation_summary="Endpoint para reactivar un usuario",

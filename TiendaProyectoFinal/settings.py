@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     "categories",
     "itemsShopCart",
     "payment_method",
+    "authentication",
+    "authenticationClient",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -59,6 +62,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "TiendaProyectoFinal.urls"
@@ -140,3 +144,20 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Modelo personalizado  de Usuario
 AUTH_USER_MODEL = "users.User"
+# Configuración DJANGO REST FRAMEWORK
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ]
+}
+# Configuración de Swagger (drf-yasg)
+# https://drf-yasg.readthedocs.io/en/stable/settings.html#swagger-settings
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {"type": "apiKey", "in": "header", "name": "Authorization"}
+    },
+    "USE_SESSION_AUTH": False,
+}
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]

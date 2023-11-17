@@ -6,10 +6,11 @@ from .serializers import (
     ProductsSearchByNameSerializer,
 )
 from .schemas import ProductsSchema
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.viewsets import generics
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
@@ -28,6 +29,13 @@ element = Element()
 class ProductView(generics.GenericAPIView):
     serializer_class = ProductsSerializer
     http_method_names = ["get", "post"]
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = [AllowAny]
+        return super(ProductView, self).get_permissions()
 
     @swagger_auto_schema(
         operation_summary="Endpoint para listar todos los productos activos",
@@ -57,6 +65,13 @@ class ProductView(generics.GenericAPIView):
 class ProductByIdView(generics.GenericAPIView):
     serializer_class = ProductsUpdateSerializer
     http_method_names = ["get", "patch", "delete"]
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [AllowAny]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super(ProductByIdView, self).get_permissions()
 
     @swagger_auto_schema(
         operation_summary="Endpoint para obtener un producto en especifico",
@@ -95,6 +110,7 @@ class ProductByIdView(generics.GenericAPIView):
 class ProductReactivateView(generics.GenericAPIView):
     serializer_class = ReactivateSerializer
     http_method_names = ["patch"]
+    permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
         operation_summary="Endpoint para habilitar nuevamente un producto",

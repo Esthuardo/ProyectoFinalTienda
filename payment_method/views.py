@@ -4,9 +4,10 @@ from .serializers import (
     PaymentMethodCreateSerializer,
     PaymentMethodUpdateSerializer,
 )
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.viewsets import generics
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from services.enableTables import Element
@@ -20,6 +21,15 @@ element = Element()
 class PaymentMethodView(generics.GenericAPIView):
     serializer_class = PaymentMethodSerializer
     http_method_names = ["get", "post"]
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            self.permission_classes = [
+                IsAuthenticated,
+            ]
+        else:
+            self.permission_classes = [AllowAny]
+        return super(PaymentMethodView, self).get_permissions()
 
     @swagger_auto_schema(
         operation_summary="Endpoint para listar todos los métodos de pago activos",
@@ -47,6 +57,13 @@ class PaymentMethodView(generics.GenericAPIView):
 class PaymentMethodByIdView(generics.GenericAPIView):
     serializer_class = PaymentMethodUpdateSerializer
     http_method_names = ["get", "patch", "delete"]
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [AllowAny]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super(PaymentMethodByIdView, self).get_permissions()
 
     @swagger_auto_schema(
         operation_summary="Endpoint para obtener un método de pago en especifico",
@@ -85,6 +102,7 @@ class PaymentMethodByIdView(generics.GenericAPIView):
 class PaymentMethodReactivateView(generics.GenericAPIView):
     serializer_class = ReactivateSerializer
     http_method_names = ["patch"]
+    permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
         operation_summary="Endpoint para reactivar un método de pago",

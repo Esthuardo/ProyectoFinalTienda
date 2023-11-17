@@ -6,7 +6,15 @@ from services.validations import validate_unique
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "first_name", "last_name", "email", "password", "username"]
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "password",
+            "username",
+            "is_active",
+        ]
 
 
 class UserCreateSerializer(serializers.Serializer):
@@ -14,7 +22,7 @@ class UserCreateSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=50)
     last_name = serializers.CharField(max_length=50)
     email = serializers.EmailField()
-    password = serializers.CharField(max_length=50)
+    password = serializers.CharField(max_length=12)
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)

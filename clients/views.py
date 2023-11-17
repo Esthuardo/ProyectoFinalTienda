@@ -5,7 +5,7 @@ from .serializers import (
 )
 from .models import Client
 from .schemas import ClientSchema
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.viewsets import generics
 from drf_yasg.utils import swagger_auto_schema
 from django.shortcuts import get_object_or_404
@@ -13,6 +13,8 @@ from rest_framework.response import Response
 from services.paginateTables import PaginateTable
 from services.validations import ReactivateSerializer
 from services.enableTables import Element
+from authenticationClient.permissions import ClientIsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 schema = ClientSchema()
 paginate = PaginateTable()
@@ -22,6 +24,13 @@ element = Element()
 class ClientView(generics.GenericAPIView):
     serializer_class = ClientSerializer
     http_method_names = ["get", "post"]
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = [AllowAny]
+        return super(ClientView, self).get_permissions()
 
     @swagger_auto_schema(
         operation_summary="Endpoint para listar a los clientes ",
@@ -52,6 +61,7 @@ class ClientView(generics.GenericAPIView):
 class ClientGetByIdView(generics.GenericAPIView):
     serializer_class = ClientSerializer
     http_method_names = ["get", "patch", "delete"]
+    permission_classes = ClientIsAuthenticated
 
     @swagger_auto_schema(
         operation_summary="Endpoint para obtener un usuario especifico",
@@ -91,6 +101,7 @@ class ClientGetByIdView(generics.GenericAPIView):
 class ClientReactivateView(generics.GenericAPIView):
     serializer_class = ReactivateSerializer
     http_method_names = ["patch"]
+    permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
         operation_summary="Endpoint para reactivar un usuario",
