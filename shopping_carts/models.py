@@ -16,7 +16,8 @@ class Shopping_cart(models.Model):
     payment_method = models.ForeignKey(
         PaymentMethod, on_delete=models.CASCADE, null=True
     )
-    direction = models.TextField(default="")
+    direction = models.TextField()
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     class Meta:
         db_table = "shopping_carts"

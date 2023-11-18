@@ -104,6 +104,21 @@ class ProductByIdView(generics.GenericAPIView):
         )
 
 
+class ProductByCategory(generics.GenericAPIView):
+    serializer_class = ProductsSerializer
+    http_method_names = ["get"]
+
+    @swagger_auto_schema(
+        operation_summary="Endpoint para los productos por categoria",
+        operation_description="En este servicio encontramos los productos por categoria",
+        manual_parameters=schema.all,
+    )
+    def get(self, request, category):
+        record = Product.objects.filter(status=True, category=category).order_by("name")
+        data = paginate.pagination(request, record, self.serializer_class)
+        return Response(data, status=status.HTTP_200_OK)
+
+
 # Reactivar un producto
 
 

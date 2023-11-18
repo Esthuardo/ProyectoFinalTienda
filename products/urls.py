@@ -4,6 +4,7 @@ from .views import (
     ProductByIdView,
     ProductReactivateView,
     ProductSearchByNameView,
+    ProductByCategory,
 )
 
 urlpatterns = [
@@ -11,4 +12,9 @@ urlpatterns = [
     path("<int:id>/", ProductByIdView.as_view(), name="product_by_id"),
     path("<int:id>/reactivate", ProductReactivateView.as_view(), name="reactivate"),
     path("name/<str:name>/", ProductSearchByNameView.as_view(), name="product_by_name"),
+    path(
+        "category/<int:category>/",
+        ProductByCategory.as_view(),
+        name="product_by_category",
+    ),
 ]
