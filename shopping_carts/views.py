@@ -17,6 +17,8 @@ from .serializers import (
 class ShoppingCartView(generics.GenericAPIView):
     serializer_class = ShoppingCartSerializer
     http_method_names = ["get", "post"]
+    authentication_classes = [ClientAuthentication]
+    permission_classes = [ClientIsAuthenticated]
 
     def get_queryset(self):
         return Shopping_cart.objects.none()
@@ -46,9 +48,6 @@ class ShoppingCartByClientIDView(generics.GenericAPIView):
     http_method_names = ["get"]
     authentication_classes = [ClientAuthentication]
     permission_classes = [ClientIsAuthenticated]
-
-    def get_queryset(self):
-        return Shopping_cart.objects.none()
 
     @swagger_auto_schema(
         operation_summary="Endpoint para listar el carrito del cliente",

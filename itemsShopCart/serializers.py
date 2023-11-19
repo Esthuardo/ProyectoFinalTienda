@@ -26,11 +26,13 @@ class ItemShopCartCreateSerializer(serializers.Serializer):
     def create(self, validated_data):
         return ItemShopCart.objects.create(**validated_data)
 
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep["id"] = instance.id
+        return rep
+
 
 class ItemShopUpdateSerializer(serializers.Serializer):
-    product = serializers.PrimaryKeyRelatedField(
-        queryset=Product.objects.filter(status=True).order_by("name")
-    )
     quantity = serializers.IntegerField()
 
     def validate(self, attrs):
