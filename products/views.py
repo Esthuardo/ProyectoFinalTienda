@@ -146,7 +146,6 @@ class ProductSearchByNameView(generics.GenericAPIView):
     @swagger_auto_schema(
         operation_summary="Endpoint para encontrar un producto por su nombre",
         operation_description=" En este servicios encontramos un producto por su atributo name",
-        manual_parameters=schema.all,
     )
     def get(self, request, name):
         record = Product.objects.filter(name__icontains=name, status=True)

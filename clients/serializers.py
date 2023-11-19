@@ -40,9 +40,9 @@ class ClientCreateSerializer(serializers.Serializer):
 
 
 class ClientUpdateSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=50)
-    surname = serializers.CharField(max_length=50)
-    email = serializers.EmailField()
+    name = serializers.CharField(max_length=50, required=False)
+    surname = serializers.CharField(max_length=50, required=False)
+    email = serializers.EmailField(required=False)
     phone_number = serializers.CharField(max_length=18)
     direction = serializers.CharField()
 

@@ -59,7 +59,7 @@ class ItemShopSearchView(generics.GenericAPIView):
             return Response(
                 {
                     "message": f"El producto con ID {product.id} tiene product_id en su campo product",
-                    "product_id": product_id,
+                    "itemShop_id": product.id,
                 },
                 status=status.HTTP_200_OK,
             )
@@ -77,6 +77,15 @@ class ItemShopByIdView(generics.GenericAPIView):
     http_method_names = ["get", "patch"]
     authentication_classes = [ClientAuthentication]
     permission_classes = [ClientIsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="Endpoint para actualizar un producto en carrito",
+        operation_description="En este servicio cambiamos los datos de un producto en carrito",
+    )
+    def get(self, _, id):
+        record = get_object_or_404(ItemShopCart, pk=id)
+        serializer = ItemShopCartSerializer(record)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         operation_summary="Endpoint para actualizar un producto en carrito",

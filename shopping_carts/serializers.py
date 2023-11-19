@@ -32,6 +32,7 @@ class ShoppingCartCreateSerializer(serializers.Serializer):
         queryset=PaymentMethod.objects.filter(status=True)
     )
     direction = serializers.CharField()
+    total = serializers.DecimalField(max_digits=10, decimal_places=2)
 
     def validate(self, attrs):
         # validate_field.status(Client, "id", attrs)

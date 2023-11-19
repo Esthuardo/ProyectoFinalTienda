@@ -9,7 +9,7 @@ class Client(models.Model):
     password = models.CharField(max_length=128)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=18)
-    direction = models.TextField(default="")
+    direction = models.TextField()
     status = models.BooleanField(default=True)
 
     class Meta:

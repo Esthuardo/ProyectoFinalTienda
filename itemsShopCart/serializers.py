@@ -35,12 +35,7 @@ class ItemShopCartCreateSerializer(serializers.Serializer):
 class ItemShopUpdateSerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
 
-    def validate(self, attrs):
-        validate_field.quantity(attrs)
-        return attrs
-
     def update(self, instance, validated_data):
         instance.__dict__.update(**validated_data)
         instance.save()
-        validated_data["message"] = f"Producto {instance.name} actualizado !"
         return validated_data

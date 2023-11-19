@@ -48,6 +48,7 @@ class validate_unique:
 
 class validate_field:
     def quantity(attrs):
+        print(attrs)
         product = attrs.get("product")
         stock = product.stock
         quantity = attrs.get("quantity")

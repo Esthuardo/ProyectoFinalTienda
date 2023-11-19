@@ -71,5 +71,7 @@ class ProductsUpdateSerializer(serializers.Serializer):
         return validated_data
 
 
-class ProductsSearchByNameSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=50)
+class ProductsSearchByNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ["id", "name"]
