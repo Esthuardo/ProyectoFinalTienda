@@ -64,7 +64,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # RENDER MIDDLEWARE
+    # "whitenoise.middleware.WhiteNoiseMiddleware",  # RENDER MIDDLEWARE
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -158,7 +158,7 @@ if not DEBUG:
 
     # Turn on WhiteNoise storage backend that takes care of compressing static files
     # and creating unique names for each version so they can safely be cached forever.
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    # STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage" ##########################
 
 
 # Default primary key field type
