@@ -14,6 +14,7 @@ from pathlib import Path
 from decouple import config
 from datetime import timedelta
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -96,14 +97,19 @@ WSGI_APPLICATION = "TiendaProyectoFinal.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT"),
-    }
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "NAME": config("DB_NAME"),
+    #     "USER": config("DB_USER"),
+    #     "PASSWORD": config("DB_PASSWORD"),
+    #     "HOST": config("DB_HOST"),
+    #     "PORT": config("DB_PORT"),
+    # }
+    "default": dj_database_url.config(
+        # Feel free to alter this value to suit your needs.
+        default="postgresql://postgres:postgres@localhost:5432/mysite",
+        conn_max_age=600,
+    )
 }
 
 
