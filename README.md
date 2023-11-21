@@ -33,6 +33,14 @@
 | name     | char(25) | not null - unique      |
 | status   | boolean  | not null               |
 
+## Tabla - Métodos de pago
+
+| variable | Type     | key                    |
+| -------- | -------- | ---------------------- |
+| id       | int      | primary key - not null |
+| name     | char(25) | not null - unique      |
+| status   | boolean  | not null               |
+
 ## Tabla - Productos
 
 | variable        | Type      | key                    |

@@ -19,7 +19,6 @@ class Client(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        # Cifra la contraseña antes de guardarla
         self.password = make_password(self.password)
         super().save(*args, **kwargs)
 
