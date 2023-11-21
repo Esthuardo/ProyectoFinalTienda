@@ -71,7 +71,7 @@
 | --------------- | --------- | ---------------------- |
 | id              | int       | primary key - not null |
 | id_shoppingcart | float     | foreign key            |
-| payment_method  | char (25) | not null               |
+| payment_method  | char (25) | foreign key            |
 | direction       | text      | not null               |
 | total           | decimal   | defailt = 0.00         |
 
